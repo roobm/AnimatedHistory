@@ -19,7 +19,7 @@ Read `docs/PLAN.md` first. It holds the goal, decisions, chapters and milestone 
 ## Commands
 - `npm install`: install dependencies
 - `npm run dev`: dev server (also reachable from a phone on the same Wi-Fi via the Network URL)
-- `npm run build`: production build into `dist/`
+- `npm run build`: production build into `dist/` (base path `/AnimatedHistory/`). Pushes to `main` deploy it to GitHub Pages through `.github/workflows/deploy.yml`
 
 ## Code layout
 - `src/cv-data.json`: all CV content
