@@ -1,4 +1,4 @@
-# CV-timeline: Project Plan (v0.7)
+# CV-timeline: Project Plan (v0.8)
 
 Living plan. Update the milestone checklist and "Decisions" whenever a feature lands (the `finish-feature` skill does this).
 
@@ -30,6 +30,8 @@ An online CV as a scroll-driven 3D journey. A low-poly character playing "Roope"
 - **Loading (M4):** the text renders first and the 3D scene (the Three.js chunk) is loaded after it with a dynamic import. If WebGL or the chunk fails, the page becomes a plain text CV with every list open
 - **Scroll position (M4):** computed from the sections' offsets instead of the window height, so it also holds in text-only mode. No scroll library
 - **Pixel ratio (M4):** capped at 1.5 on screens narrower than 640 px, 2 elsewhere
+- **Deploy (M5):** `.github/workflows/deploy.yml` builds with Node 22 on every pull request to `main` (build check only) and publishes `dist/` to GitHub Pages on every push to `main`. `vite.config.js` sets `base` to `/AnimatedHistory/` for builds only, so the dev server stays at the root. The address is https://roobm.github.io/AnimatedHistory/
+- **Sharing (M5):** title, description, theme colour, canonical URL and Open Graph tags in `index.html`, plus an inline SVG parcel favicon. No preview image yet
 
 ## Chapters
 | # | Chapter | Years | Outfit | Scene idea |
@@ -69,7 +71,7 @@ Running gag: the same box or pallet travels through the whole journey (shelf, sa
 - [x] **M2 - Character:** low-poly character with idle/work animations and per-chapter outfits
 - [x] **M3 - Scenes:** one polished scene per chapter plus transitions
 - [x] **M4 - Polish:** humor, easter eggs, mobile/performance pass, accessibility. The test on a real phone is still to do (see M4 notes)
-- [ ] **M5 - Launch:** GitHub Pages deploy with GitHub Actions, final content review, share link
+- [ ] **M5 - Launch:** GitHub Pages deploy with GitHub Actions, final content review, share link. Tick this once the first deploy from `main` is live (see M5 notes)
 
 ## Suggested model use
 Sonnet for M1 (skeleton). Fable for M2-M4 (camera, animation, scenes). Sonnet again for the M5 deploy if you like.
@@ -93,9 +95,16 @@ Sonnet for M1 (skeleton). Fable for M2-M4 (camera, animation, scenes). Sonnet ag
 - Not checked: a real phone (touch, frame rate, the browser's collapsing address bar), a screen reader, and browsers other than Chrome. Do this before the M5 launch with `npm run dev` and the Network URL
 - Known limits: on a portrait phone only the middle of a scene fits, so most parcels are out of view and are found with the counter button instead of a tap. In the studies chapter the "?" thought briefly overlaps the blackboard text
 
+## M5 notes
+- Done in code: the Pages workflow, the base path, share meta tags and a favicon. Content review: `src/cv-data.json` has no employer names, phone number or email, and years appear only on the IT-era chapters
+- Checked: `npm run build` passes. The build served from a plain static server under `/AnimatedHistory/` loads its script, stylesheet and lazy 3D chunk and renders the scene (the same layout GitHub Pages uses). The workflow itself has not run yet, because that needs GitHub
+- One manual step for Roope: in the repository on GitHub, go to Settings > Pages and set Source to "GitHub Actions". Without it the deploy job fails. After the merge, check the Actions tab and open the address above
+- Not checked: the live site, and `vite preview` (it answered 404 to the browser's script request under the subpath, while a static server and curl worked, so this looks like a preview quirk and not a build problem)
+- To do after launch: a preview image for link sharing, and a real-phone test (see M4 notes)
+
 ## Open questions
 - Should the parcels move closer to the middle on portrait phones, so they can be tapped instead of found with the counter?
-- Custom domain for GitHub Pages?
+- Custom domain for GitHub Pages? The default address is used for now
 - More jokes? The one-liners live in `src/eggs.js` and are easy to swap
 - Whether to include the forest and boat building as a prologue or hidden easter egg
 - Whether to add an email address on the page later
