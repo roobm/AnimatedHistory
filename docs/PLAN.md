@@ -1,4 +1,4 @@
-# CV-timeline: Project Plan (v0.5)
+# CV-timeline: Project Plan (v0.6)
 
 Living plan. Update the milestone checklist and "Decisions" whenever a feature lands (the `finish-feature` skill does this).
 
@@ -20,6 +20,10 @@ An online CV as a scroll-driven 3D journey. A low-poly character playing "Roope"
 - **Animation (M2):** poses are plain objects of joint angles, blended in code (`src/animations.js`). The walk cycle advances by distance travelled, so fast scrolling makes him run and scrolling back makes him turn around. No animation library
 - **Outfit change (M2):** the outfit swaps halfway between two chapters with a quick spin and a squash-and-stretch pop
 - **Reduced motion (M2):** the character stands in a frozen work pose, with no walking, spinning or sparks
+- **Scenes (M3):** one module per chapter in `src/scenes/`, all built from primitives with a shared kit (`src/scenery.js`). Each returns `{ object, ground, update(time, dt), mascot }`. No per-scene lights: glowing things use emissive materials, and text is drawn on canvas textures
+- **Stage layout (M3):** every chapter is an octagonal floor (radius 6.2) on the road. Props stay off the road (z beyond about ±1.05) so he can always walk through, and tall things stay away from the card's side
+- **Transitions (M3):** a scene's props pop up one by one as the chapter scrolls into view, and a "LEVEL n" gate stands between two chapters. With reduced motion the scenes are simply there, frozen
+- **Running gag (M3):** the same cardboard parcel is somewhere in every chapter (sale sticker, goggles, hairnet, hi-vis, graduation cap, badge, barcode), turns into a data packet in the cloud chapters and wears shades at the party. Each scene exposes it as `mascot` for the M4 easter egg
 
 ## Chapters
 | # | Chapter | Years | Outfit | Scene idea |
@@ -57,7 +61,7 @@ Running gag: the same box or pallet travels through the whole journey (shelf, sa
 - [x] **M0 - Content:** CV and early-job details captured in `docs/cv-data-draft.json`
 - [x] **M1 - Skeleton:** Vite project running locally, scroll structure, one placeholder scene per chapter, `cv-data.json` loaded. Done when scrolling moves through all ten placeholder chapters in the local dev server
 - [x] **M2 - Character:** low-poly character with idle/work animations and per-chapter outfits
-- [ ] **M3 - Scenes:** one polished scene per chapter plus transitions
+- [x] **M3 - Scenes:** one polished scene per chapter plus transitions
 - [ ] **M4 - Polish:** humor, easter eggs, mobile/performance pass (test on a real phone via the local network), accessibility
 - [ ] **M5 - Launch:** GitHub Pages deploy with GitHub Actions, final content review, share link
 
@@ -68,6 +72,12 @@ Sonnet for M1 (skeleton). Fable for M2-M4 (camera, animation, scenes). Sonnet ag
 - Done: the character walks between chapters as you scroll, then plays a job-specific work animation when a chapter is in view. Outfits follow the chapter table
 - Work animations: lifting a box to the shelf, grinding with sparks, a sausage line that keeps speeding up, order picking, reading with a head scratch, presenting the screen, training with a tablet, typing, typing with a fist pump, waving
 - Left for M3: the things he works on (shelves, metal plate, conveyor, LED screen and so on). For now he mimes against an empty stage
+- Not yet tested on a real phone (M4)
+
+## M3 notes
+- Done: ten scenes. Supermarket aisle, grinding workshop, sausage line, picking warehouse, lecture room with a pretzel, stadium LED screen, automated stacker crane with a live control screen, Dynamics-to-Azure plumbing with a Bicep scroll, legacy mainframe migrating to a medallion data platform with a Blob to OpenAI to Copilot line and a "LEVEL UP!", and a confetti party with the two certifications
+- Checked in headless Chrome at 1280x800: all ten chapters, two transitions and reduced motion, with no console errors
+- Left for M4: on a phone the card covers the lower half, so the character's legs and the floor props are hidden. The tall IT-era cards clip their tag rows. The tablet shows its back to the camera. Clicking the parcel does nothing yet
 - Not yet tested on a real phone (M4)
 
 ## Open questions

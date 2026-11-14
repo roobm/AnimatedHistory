@@ -25,8 +25,10 @@ Read `docs/PLAN.md` first. It holds the goal, decisions, chapters and milestone 
 - `src/cv-data.json`: all CV content
 - `src/chapters.js`: builds the chapter list (adds the epilogue)
 - `src/cards.js`: HTML cards, hero and nav dots
-- `src/world.js`: Three.js scene, one placeholder scene per chapter, the road, camera follows scroll
+- `src/world.js`: Three.js renderer, the road, one floor per chapter, level gates, prop pop-up, camera follows scroll
+- `src/scenes/`: one scene per chapter (`index.js` maps chapter ids to builders). A builder returns `{ object, ground, update?(time, dt), mascot? }`. The world animates the scale of `object`'s direct children, so scenes only animate nested objects
+- `src/scenery.js`: props shared by scenes: the parcel mascot, data packet, racks, conveyor, forklift, pipes, signposts, bystanders
 - `src/character.js`: the jointed character: rig, outfits, hand props, sparks, walk/work state
 - `src/animations.js`: poses (joint angles), walk cycle, one work animation per chapter
-- `src/lowpoly.js`: shared flat-shaded material and box helpers
+- `src/lowpoly.js`: flat and glowing materials, box/cylinder/ball helpers, canvas panels and text labels
 - `src/main.js`: wires scroll position to the world and nav
