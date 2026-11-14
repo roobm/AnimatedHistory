@@ -8,15 +8,20 @@
   </head>
   <body>
     <canvas id="scene" aria-hidden="true"></canvas>
+    <div id="progress" aria-hidden="true"></div>
 
     <header class="hero">
       <h1 id="name"></h1>
       <p id="title"></p>
       <p id="tagline"></p>
+      <p id="hint" aria-hidden="true">Scroll to walk ↓</p>
     </header>
 
+    <button id="hunt" type="button" hidden></button>
     <nav id="nav" aria-label="Chapters"></nav>
     <main id="chapters"></main>
+    <p id="bubble" role="status" aria-live="polite"></p>
+    <noscript><p class="noscript">This CV is an animated timeline and needs JavaScript to show its chapters.</p></noscript>
 
     <script type="module" src="/src/main.js"></script>
   </body>
