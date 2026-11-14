@@ -62,6 +62,17 @@ export const pulse = (t, period, length) => {
   return u < length ? Math.sin((u / length) * Math.PI) : 0;
 };
 
+// Clicked: he hops and waves with the hand that is free. hand: 'R' or 'L'.
+export function hello(t, hand, hop) {
+  return {
+    headZ: hand === 'R' ? -0.12 : 0.12,
+    headX: -0.08,
+    [`arm${hand}Out`]: 2.35 + Math.sin(t * 13) * 0.28,
+    [`elbow${hand}`]: 0.35,
+    lift: hop,
+  };
+}
+
 function typing(t) {
   const tap = Math.sin(t * 19) * 0.07;
   return {

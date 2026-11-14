@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { flat, glow, box, group } from './lowpoly.js';
-import { REST, WORK, mixPose, walkPose } from './animations.js';
+import { REST, WORK, mixPose, walkPose, hello } from './animations.js';
 
 const SKIN = 0xe0b08c;
 const HAIR = 0x5a3a24;
@@ -14,6 +14,7 @@ const LEFT = 1;
 
 const WALK_HEADING = 1.15; // three-quarter view while walking, not a flat profile
 const SPIN_SECONDS = 0.5; // quick-change spin when the outfit swaps
+const HELLO_SECONDS = 1.4; // hop and wave when he is clicked
 
 // Colours per chapter. Missing sleeve parts take the top colour, missing
 // hands are bare. extras: accessories to show, built in buildRig().
@@ -183,7 +184,15 @@ function buildProps(rig) {
   props.book.position.set(0.16, -0.06, 0);
   rig.arms.R.grip.add(props.book);
 
-  props.tablet = group(box(0.34, 0.03, 0.46, flat(0x20242c)), box(0.3, 0.01, 0.42, glow(0x26c6da), 0, 0.02, 0));
+  // He holds the tablet up for the trainees, so the screen faces away from him.
+  const ink = flat(0x0d3b4a);
+  props.tablet = group(
+    box(0.34, 0.03, 0.46, flat(0x20242c)),
+    box(0.3, 0.01, 0.42, glow(0x26c6da), 0, -0.02, 0),
+    box(0.22, 0.012, 0.05, ink, 0, -0.022, -0.13),
+    box(0.1, 0.012, 0.1, ink, -0.06, -0.022, 0.02),
+    box(0.1, 0.012, 0.1, ink, 0.06, -0.022, 0.02),
+  );
   props.tablet.position.set(-0.1, -0.06, 0);
   rig.arms.L.grip.add(props.tablet);
 
@@ -278,6 +287,7 @@ export function createCharacter() {
   let phase = 0; // walk cycle, advanced by distance so the feet match the ground
   let work = 1; // 0 = walking, 1 = working
   let spin = 1; // 0..1 progress of the quick-change spin, 1 = done
+  let greet = 1; // 0..1 progress of the hop and wave, 1 = done
 
   function setOutfit(id) {
     const outfit = OUTFITS[id] ?? OUTFITS.supermarket;
@@ -323,7 +333,15 @@ export function createCharacter() {
       // Standing on the road between chapters: look back at the viewer.
       pose.headY -= heading * 0.6 * (1 - stride) * (1 - work);
 
-      heading += ((atChapter ? job.heading : direction * WALK_HEADING) - heading) * damp(9, dt);
+      if (greet < 1) {
+        greet = Math.min(greet + dt / HELLO_SECONDS, 1);
+        const hop = 0.45 * Math.sin(clamp01(greet * 3) * Math.PI);
+        const hand = job.prop === 'tablet' ? 'R' : 'L'; // the one without a prop
+        mixPose(pose, pose, hello(time, hand, hop), smooth(clamp01(Math.sin(greet * Math.PI) * 2.5)));
+      }
+
+      const facing = greet < 1 ? 0 : atChapter ? job.heading : direction * WALK_HEADING;
+      heading += (facing - heading) * damp(9, dt);
       spin = Math.min(spin + dt / SPIN_SECONDS, 1);
       rig.eyes.scale.y = time % 3.7 < 0.12 ? 0.15 : 1; // blink
     }
@@ -347,5 +365,10 @@ export function createCharacter() {
     sparks.update(dt, grinding ? sparkOrigin : null);
   }
 
-  return { object, update };
+  // Clicked or tapped: turn to the viewer, hop and wave.
+  function poke() {
+    greet = 0;
+  }
+
+  return { object, body: rig.root, update, poke };
 }
