@@ -11,6 +11,7 @@
   "chapters": [
     { "id": "supermarket", "title": "Supermarket", "years": null, "role": "Shelf stocker (not the cashier!)", "outfit": "apron", "tech": [], "highlights": ["Stocking shelves in a supermarket"] },
     { "id": "metal", "title": "Metal industry", "years": null, "role": "Angle grinder operator", "outfit": "goggles, ear protection, gloves, apron", "tech": [], "highlights": ["Cleaning big raw metal plates that came straight from cutting", "Sparks, safety goggles and a very loud workday"] },
+    { "id": "sausages", "title": "Sausage factory", "years": null, "role": "Sausage packer (summer job)", "outfit": "hairnet, white coat, gloves", "tech": [], "highlights": ["Packing sausages over the summer"] },
     { "id": "logistics", "title": "Logistics", "years": null, "role": "Logistics operator", "outfit": "hi-vis vest, safety shoes", "tech": [], "highlights": ["Order picking: splitting a box of one product into each customer's order", "Driving a forklift when needed"] },
     { "id": "studies", "title": "Studies", "years": "2015-2019", "role": "BSc Information Technology", "outfit": "hoodie, backpack", "tech": [], "highlights": ["Exchange in Aschaffenburg, Germany (Sep 2017 - Feb 2018)", "Thesis: control software for digital information monitors using ReactJS"] },
     { "id": "signage", "title": "Digital signage", "years": "Mar-Aug 2018", "role": "Trainee and thesis worker", "outfit": "hoodie, ID badge", "tech": ["JavaScript", "HTML/CSS", "ReactJS"], "highlights": ["Software to control LED screen advertising at a stadium", "UI and UX design"] },

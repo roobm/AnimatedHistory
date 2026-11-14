@@ -7,6 +7,7 @@ const DARK = new THREE.Color(0x0e1117);
 const COLORS = {
   supermarket: 0x4caf50,
   metal: 0xff7043,
+  sausages: 0xe57373,
   logistics: 0xffc107,
   studies: 0x42a5f5,
   signage: 0xab47bc,
@@ -15,6 +16,9 @@ const COLORS = {
   'azure-data': 0x0078d4,
   epilogue: 0xf06292,
 };
+
+// From here on the pallet has turned into a data packet, so it glows.
+const GLOWING_PALLET = new Set(['integrations', 'azure-data', 'epilogue']);
 
 const flat = (color, extra = {}) => new THREE.MeshStandardMaterial({ color, flatShading: true, roughness: 0.8, ...extra });
 
@@ -53,7 +57,7 @@ function makeChapterScene(chapter, index) {
   floor.position.y = -0.15;
 
   const character = makeCharacter(color);
-  const pallet = makePallet(color, index >= 6);
+  const pallet = makePallet(color, GLOWING_PALLET.has(chapter.id));
 
   group.add(floor, character, pallet);
   group.userData = { character, pallet, color: new THREE.Color(color) };
