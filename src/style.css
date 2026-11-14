@@ -163,7 +163,6 @@ body {
 
 .links a {
   color: var(--accent);
-  text-transform: capitalize;
 }
 
 @media (max-width: 40rem) {

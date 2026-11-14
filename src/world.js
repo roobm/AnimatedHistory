@@ -31,8 +31,8 @@ function makeCharacter(color) {
   const head = new THREE.Mesh(new THREE.IcosahedronGeometry(0.42, 0), flat(0xe0b08c));
   head.position.y = 2.1;
   const hair = new THREE.Mesh(new THREE.IcosahedronGeometry(0.45, 0), flat(0x5a3a24));
-  hair.position.y = 2.22;
-  hair.scale.y = 0.75;
+  hair.position.y = 2.36;
+  hair.scale.y = 0.6;
   const legs = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.5, 0.5), flat(0x2b3140));
   legs.position.y = 0.25;
 

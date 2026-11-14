@@ -51,7 +51,7 @@ Running gag: the same box or pallet travels through the whole journey (shelf, sa
 
 ## Milestones
 - [x] **M0 - Content:** CV and early-job details captured in `docs/cv-data-draft.json`
-- [ ] **M1 - Skeleton:** Vite project running locally, scroll structure, one placeholder scene per chapter, `cv-data.json` loaded. Done when scrolling moves through all ten placeholder chapters in the local dev server
+- [x] **M1 - Skeleton:** Vite project running locally, scroll structure, one placeholder scene per chapter, `cv-data.json` loaded. Done when scrolling moves through all ten placeholder chapters in the local dev server
 - [ ] **M2 - Character:** low-poly character with idle/work animations and per-chapter outfits
 - [ ] **M3 - Scenes:** one polished scene per chapter plus transitions
 - [ ] **M4 - Polish:** humor, easter eggs, mobile/performance pass (test on a real phone via the local network), accessibility
@@ -59,6 +59,10 @@ Running gag: the same box or pallet travels through the whole journey (shelf, sa
 
 ## Suggested model use
 Sonnet for M1 (skeleton). Fable for M2-M4 (camera, animation, scenes). Sonnet again for the M5 deploy if you like.
+
+## M2 notes
+- The character should walk between chapters as you scroll, then play a job-specific work animation when a chapter is in view (Roope liked the walking idea)
+- Per-chapter outfits as in the chapter table
 
 ## Open questions
 - Custom domain for GitHub Pages?

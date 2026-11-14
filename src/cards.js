@@ -41,8 +41,9 @@ export function renderChapters(chapters) {
 
     if (chapter.links) {
       const links = el('p', 'links');
-      for (const [label, href] of Object.entries(chapter.links)) {
-        const a = el('a', null, label);
+      const labels = { linkedin: 'LinkedIn', github: 'GitHub' };
+      for (const [key, href] of Object.entries(chapter.links)) {
+        const a = el('a', null, labels[key] ?? key);
         a.href = href;
         a.target = '_blank';
         a.rel = 'noopener noreferrer';
