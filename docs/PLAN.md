@@ -1,4 +1,4 @@
-# CV-timeline: Project Plan (v0.8)
+# CV-timeline: Project Plan (v0.9)
 
 Living plan. Update the milestone checklist and "Decisions" whenever a feature lands (the `finish-feature` skill does this).
 
@@ -71,7 +71,7 @@ Running gag: the same box or pallet travels through the whole journey (shelf, sa
 - [x] **M2 - Character:** low-poly character with idle/work animations and per-chapter outfits
 - [x] **M3 - Scenes:** one polished scene per chapter plus transitions
 - [x] **M4 - Polish:** humor, easter eggs, mobile/performance pass, accessibility. The test on a real phone is still to do (see M4 notes)
-- [ ] **M5 - Launch:** GitHub Pages deploy with GitHub Actions, final content review, share link. Tick this once the first deploy from `main` is live (see M5 notes)
+- [x] **M5 - Launch:** GitHub Pages deploy with GitHub Actions, final content review, share link: https://roobm.github.io/AnimatedHistory/
 
 ## Suggested model use
 Sonnet for M1 (skeleton). Fable for M2-M4 (camera, animation, scenes). Sonnet again for the M5 deploy if you like.
@@ -97,9 +97,10 @@ Sonnet for M1 (skeleton). Fable for M2-M4 (camera, animation, scenes). Sonnet ag
 
 ## M5 notes
 - Done in code: the Pages workflow, the base path, share meta tags and a favicon. Content review: `src/cv-data.json` has no employer names, phone number or email, and years appear only on the IT-era chapters
-- Checked: `npm run build` passes. The build served from a plain static server under `/AnimatedHistory/` loads its script, stylesheet and lazy 3D chunk and renders the scene (the same layout GitHub Pages uses). The workflow itself has not run yet, because that needs GitHub
-- One manual step for Roope: in the repository on GitHub, go to Settings > Pages and set Source to "GitHub Actions". Without it the deploy job fails. After the merge, check the Actions tab and open the address above
-- Not checked: the live site, and `vite preview` (it answered 404 to the browser's script request under the subpath, while a static server and curl worked, so this looks like a preview quirk and not a build problem)
+- Checked: `npm run build` passes. The build served from a plain static server under `/AnimatedHistory/` loads its script, stylesheet and lazy 3D chunk and renders the scene (the same layout GitHub Pages uses).
+- Pages Source is set to "GitHub Actions" in the repository settings, which the deploy job needs
+- Live: the first deploy from `main` succeeded. The live site returns 200 for the page and its assets, and in headless Chrome all ten cards and the 3D scene load
+- Not checked: a real phone on the live site, and `vite preview` (it answered 404 to the browser's script request under the subpath, while a static server and curl worked, so this looks like a preview quirk and not a build problem)
 - To do after launch: a preview image for link sharing, and a real-phone test (see M4 notes)
 
 ## Open questions
