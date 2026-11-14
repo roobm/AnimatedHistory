@@ -1,4 +1,4 @@
-# CV-timeline: Project Plan (v0.4)
+# CV-timeline: Project Plan (v0.5)
 
 Living plan. Update the milestone checklist and "Decisions" whenever a feature lands (the `finish-feature` skill does this).
 
@@ -16,6 +16,10 @@ An online CV as a scroll-driven 3D journey. A low-poly character playing "Roope"
 - **Title:** "Senior Software Developer" (as in the CV)
 - **Privacy:** no employer names on the page (use generic labels). No phone number. No email for now. LinkedIn and GitHub links are fine
 - **Years:** shown only for the IT-era chapters. The earlier jobs are shown only in order
+- **One character, one road (M2):** a single jointed character built from Three.js primitives walks along a road through all chapters, instead of one figure per chapter. No glTF or Mixamo for now
+- **Animation (M2):** poses are plain objects of joint angles, blended in code (`src/animations.js`). The walk cycle advances by distance travelled, so fast scrolling makes him run and scrolling back makes him turn around. No animation library
+- **Outfit change (M2):** the outfit swaps halfway between two chapters with a quick spin and a squash-and-stretch pop
+- **Reduced motion (M2):** the character stands in a frozen work pose, with no walking, spinning or sparks
 
 ## Chapters
 | # | Chapter | Years | Outfit | Scene idea |
@@ -52,7 +56,7 @@ Running gag: the same box or pallet travels through the whole journey (shelf, sa
 ## Milestones
 - [x] **M0 - Content:** CV and early-job details captured in `docs/cv-data-draft.json`
 - [x] **M1 - Skeleton:** Vite project running locally, scroll structure, one placeholder scene per chapter, `cv-data.json` loaded. Done when scrolling moves through all ten placeholder chapters in the local dev server
-- [ ] **M2 - Character:** low-poly character with idle/work animations and per-chapter outfits
+- [x] **M2 - Character:** low-poly character with idle/work animations and per-chapter outfits
 - [ ] **M3 - Scenes:** one polished scene per chapter plus transitions
 - [ ] **M4 - Polish:** humor, easter eggs, mobile/performance pass (test on a real phone via the local network), accessibility
 - [ ] **M5 - Launch:** GitHub Pages deploy with GitHub Actions, final content review, share link
@@ -61,8 +65,10 @@ Running gag: the same box or pallet travels through the whole journey (shelf, sa
 Sonnet for M1 (skeleton). Fable for M2-M4 (camera, animation, scenes). Sonnet again for the M5 deploy if you like.
 
 ## M2 notes
-- The character should walk between chapters as you scroll, then play a job-specific work animation when a chapter is in view (Roope liked the walking idea)
-- Per-chapter outfits as in the chapter table
+- Done: the character walks between chapters as you scroll, then plays a job-specific work animation when a chapter is in view. Outfits follow the chapter table
+- Work animations: lifting a box to the shelf, grinding with sparks, a sausage line that keeps speeding up, order picking, reading with a head scratch, presenting the screen, training with a tablet, typing, typing with a fist pump, waving
+- Left for M3: the things he works on (shelves, metal plate, conveyor, LED screen and so on). For now he mimes against an empty stage
+- Not yet tested on a real phone (M4)
 
 ## Open questions
 - Custom domain for GitHub Pages?

@@ -25,5 +25,8 @@ Read `docs/PLAN.md` first. It holds the goal, decisions, chapters and milestone 
 - `src/cv-data.json`: all CV content
 - `src/chapters.js`: builds the chapter list (adds the epilogue)
 - `src/cards.js`: HTML cards, hero and nav dots
-- `src/world.js`: Three.js scene, one placeholder scene per chapter, camera follows scroll
+- `src/world.js`: Three.js scene, one placeholder scene per chapter, the road, camera follows scroll
+- `src/character.js`: the jointed character: rig, outfits, hand props, sparks, walk/work state
+- `src/animations.js`: poses (joint angles), walk cycle, one work animation per chapter
+- `src/lowpoly.js`: shared flat-shaded material and box helpers
 - `src/main.js`: wires scroll position to the world and nav
