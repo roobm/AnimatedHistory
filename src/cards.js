@@ -1,6 +1,9 @@
 // Builds the HTML side of the page. It is real text, so the CV stays
 // readable (and indexable) even when WebGL is unavailable.
 
+const COMPACT = '(max-width: 40rem), (max-height: 34rem)'; // same query as in style.css
+const LONG_LIST = 80; // characters of highlights that still fit an open card on a phone
+
 function el(tag, className, text) {
   const node = document.createElement(tag);
   if (className) node.className = className;
@@ -16,6 +19,7 @@ export function renderHero(cv) {
 
 export function renderChapters(chapters) {
   const main = document.getElementById('chapters');
+  const folds = [];
   chapters.forEach((chapter, i) => {
     const section = el('section', 'chapter');
     section.id = chapter.id;
@@ -30,7 +34,13 @@ export function renderChapters(chapters) {
     if (chapter.highlights?.length) {
       const list = el('ul', 'highlights');
       chapter.highlights.forEach((h) => list.append(el('li', null, h)));
-      card.append(list);
+      // On a small screen a long list folds away, so the card leaves room
+      // for the scene. The summary is hidden where the list is always open.
+      const more = el('details', 'more');
+      more.dataset.long = String(chapter.highlights.join('').length > LONG_LIST);
+      more.append(el('summary', null, chapter.id === 'epilogue' ? 'Certifications' : 'What I did'), list);
+      card.append(more);
+      folds.push(more);
     }
 
     if (chapter.tech?.length) {
@@ -55,6 +65,17 @@ export function renderChapters(chapters) {
     section.append(card);
     main.append(section);
   });
+
+  const compact = window.matchMedia(COMPACT);
+  const fold = () => {
+    const textOnly = document.body.classList.contains('no-webgl');
+    folds.forEach((more) => {
+      more.open = textOnly || !(compact.matches && more.dataset.long === 'true');
+    });
+  };
+  compact.addEventListener('change', fold);
+  fold();
+  return { refold: fold };
 }
 
 export function renderNav(chapters, onSelect) {
