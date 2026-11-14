@@ -56,7 +56,8 @@ export function walkPose(phase, stride, run) {
 
 const wave = (t, speed) => 0.5 - 0.5 * Math.cos(t * speed); // 0..1..0
 // A single bump of the given length at the start of every period, else 0.
-const pulse = (t, period, length) => {
+// Exported so the scenes can stay in step with the work animations.
+export const pulse = (t, period, length) => {
   const u = t % period;
   return u < length ? Math.sin((u / length) * Math.PI) : 0;
 };

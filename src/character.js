@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { flat, box } from './lowpoly.js';
+import { flat, glow, box, group } from './lowpoly.js';
 import { REST, WORK, mixPose, walkPose } from './animations.js';
 
 const SKIN = 0xe0b08c;
@@ -29,8 +29,6 @@ const OUTFITS = {
   'azure-data': { top: 0x0078d4, legs: 0x2b3140, shoes: 0xf4f4f4, extras: ['hood', 'headset'] },
   epilogue: { top: 0x1f2a44, legs: 0x1f2a44, shoes: 0xf4f4f4, extras: ['tie', 'sunglasses'] },
 };
-
-const group = (...children) => new THREE.Group().add(...children);
 
 function buildRig() {
   const mats = {
@@ -185,7 +183,6 @@ function buildProps(rig) {
   props.book.position.set(0.16, -0.06, 0);
   rig.arms.R.grip.add(props.book);
 
-  const glow = (color) => flat(color, { emissive: color, emissiveIntensity: 0.7 });
   props.tablet = group(box(0.34, 0.03, 0.46, flat(0x20242c)), box(0.3, 0.01, 0.42, glow(0x26c6da), 0, 0.02, 0));
   props.tablet.position.set(-0.1, -0.06, 0);
   rig.arms.L.grip.add(props.tablet);
