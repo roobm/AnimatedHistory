@@ -62,14 +62,24 @@ export const pulse = (t, period, length) => {
   return u < length ? Math.sin((u / length) * Math.PI) : 0;
 };
 
-// Clicked: he hops and waves with the hand that is free. hand: 'R' or 'L'.
+// Clicked: he stops working, hops and waves with the hand that is free
+// (hand: 'R' or 'L') while the other one keeps hold of his prop. hop: 0..1.
 export function hello(t, hand, hop) {
+  const other = hand === 'R' ? 'L' : 'R';
   return {
     headZ: hand === 'R' ? -0.12 : 0.12,
     headX: -0.08,
-    [`arm${hand}Out`]: 2.35 + Math.sin(t * 13) * 0.28,
-    [`elbow${hand}`]: 0.35,
-    lift: hop,
+    [`arm${hand}`]: 0.1,
+    [`arm${hand}Out`]: 2.4 + Math.sin(t * 13) * 0.28,
+    [`elbow${hand}`]: 0.25,
+    [`arm${other}`]: 0.5,
+    [`arm${other}Out`]: 0,
+    [`elbow${other}`]: 1.1,
+    legR: 0.2 * hop,
+    legL: 0.2 * hop,
+    kneeR: 0.5 * hop,
+    kneeL: 0.5 * hop,
+    lift: 0.45 * hop,
   };
 }
 

@@ -335,7 +335,7 @@ export function createCharacter() {
 
       if (greet < 1) {
         greet = Math.min(greet + dt / HELLO_SECONDS, 1);
-        const hop = 0.45 * Math.sin(clamp01(greet * 3) * Math.PI);
+        const hop = Math.sin(clamp01(greet * 3) * Math.PI);
         const hand = job.prop === 'tablet' ? 'R' : 'L'; // the one without a prop
         mixPose(pose, pose, hello(time, hand, hop), smooth(clamp01(Math.sin(greet * Math.PI) * 2.5)));
       }
