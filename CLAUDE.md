@@ -24,11 +24,12 @@ Read `docs/PLAN.md` first. It holds the goal, decisions, chapters and milestone 
 ## Code layout
 - `src/cv-data.json`: all CV content
 - `src/chapters.js`: builds the chapter list (adds the epilogue)
-- `src/cards.js`: HTML cards, hero and nav dots
-- `src/world.js`: Three.js renderer, the road, one floor per chapter, level gates, prop pop-up, camera follows scroll
+- `src/cards.js`: HTML cards (long highlight lists fold on small screens), hero and nav dots
+- `src/world.js`: Three.js renderer, the road, one floor per chapter, level gates, prop pop-up, camera follows scroll, click picking of the parcel and the character, confetti
 - `src/scenes/`: one scene per chapter (`index.js` maps chapter ids to builders). A builder returns `{ object, ground, update?(time, dt), mascot? }`. The world animates the scale of `object`'s direct children, so scenes only animate nested objects
 - `src/scenery.js`: props shared by scenes: the parcel mascot, data packet, racks, conveyor, forklift, pipes, signposts, bystanders
 - `src/character.js`: the jointed character: rig, outfits, hand props, sparks, walk/work state
 - `src/animations.js`: poses (joint angles), walk cycle, one work animation per chapter
 - `src/lowpoly.js`: flat and glowing materials, box/cylinder/ball helpers, canvas panels and text labels
-- `src/main.js`: wires scroll position to the world and nav
+- `src/eggs.js`: easter eggs: speech bubbles with the one-liners, the parcel hunt counter
+- `src/main.js`: wires scroll position to the world, nav and progress bar. Loads the world lazily and falls back to a text-only page

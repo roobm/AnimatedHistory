@@ -1,4 +1,4 @@
-# CV-timeline: Project Plan (v0.6)
+# CV-timeline: Project Plan (v0.7)
 
 Living plan. Update the milestone checklist and "Decisions" whenever a feature lands (the `finish-feature` skill does this).
 
@@ -24,6 +24,12 @@ An online CV as a scroll-driven 3D journey. A low-poly character playing "Roope"
 - **Stage layout (M3):** every chapter is an octagonal floor (radius 6.2) on the road. Props stay off the road (z beyond about ±1.05) so he can always walk through, and tall things stay away from the card's side
 - **Transitions (M3):** a scene's props pop up one by one as the chapter scrolls into view, and a "LEVEL n" gate stands between two chapters. With reduced motion the scenes are simply there, frozen
 - **Running gag (M3):** the same cardboard parcel is somewhere in every chapter (sale sticker, goggles, hairnet, hi-vis, graduation cap, badge, barcode), turns into a data packet in the cloud chapters and wears shades at the party. Each scene exposes it as `mascot` for the M4 easter egg
+- **Easter eggs (M4):** clicking the parcel makes it hop and spin, clicking the character makes him hop and wave, and both answer with a one-liner per chapter in an HTML speech bubble (`src/eggs.js`). The bubble is a live region, so screen readers hear it too
+- **Parcel hunt (M4):** a "Parcels n/10" counter in the top right corner. Finding all ten throws confetti. The counter is also a button: pressed with the keyboard it finds the current chapter's parcel, clicked it makes the parcel hop, and when the parcel is outside a narrow screen it counts as found
+- **Phone layout (M4):** on a portrait screen the picture is shifted up (camera view offset) so he stands above the card. Cards stay under 44% of the screen height, and a highlight list longer than 80 characters folds into a "What I did" toggle. On big screens the list is always open
+- **Loading (M4):** the text renders first and the 3D scene (the Three.js chunk) is loaded after it with a dynamic import. If WebGL or the chunk fails, the page becomes a plain text CV with every list open
+- **Scroll position (M4):** computed from the sections' offsets instead of the window height, so it also holds in text-only mode. No scroll library
+- **Pixel ratio (M4):** capped at 1.5 on screens narrower than 640 px, 2 elsewhere
 
 ## Chapters
 | # | Chapter | Years | Outfit | Scene idea |
@@ -62,7 +68,7 @@ Running gag: the same box or pallet travels through the whole journey (shelf, sa
 - [x] **M1 - Skeleton:** Vite project running locally, scroll structure, one placeholder scene per chapter, `cv-data.json` loaded. Done when scrolling moves through all ten placeholder chapters in the local dev server
 - [x] **M2 - Character:** low-poly character with idle/work animations and per-chapter outfits
 - [x] **M3 - Scenes:** one polished scene per chapter plus transitions
-- [ ] **M4 - Polish:** humor, easter eggs, mobile/performance pass (test on a real phone via the local network), accessibility
+- [x] **M4 - Polish:** humor, easter eggs, mobile/performance pass, accessibility. The test on a real phone is still to do (see M4 notes)
 - [ ] **M5 - Launch:** GitHub Pages deploy with GitHub Actions, final content review, share link
 
 ## Suggested model use
@@ -80,8 +86,16 @@ Sonnet for M1 (skeleton). Fable for M2-M4 (camera, animation, scenes). Sonnet ag
 - Left for M4: on a phone the card covers the lower half, so the character's legs and the floor props are hidden. The tall IT-era cards clip their tag rows. The tablet shows its back to the camera. Clicking the parcel does nothing yet
 - Not yet tested on a real phone (M4)
 
+## M4 notes
+- Done: click easter eggs with speech bubbles, the parcel hunt with a confetti finale, a progress bar, a "Scroll to walk" hint, a shade behind the name, the tablet now shows its screen, phone framing and folding cards, a narrower card for a phone on its side, 24 px nav targets, visible keyboard focus, a `<noscript>` message and a tidier text-only mode
+- Checked in headless Chrome, with no console errors: desktop 1280x800, phone portrait 390x844, phone landscape 844x390, reduced motion (bubbles only, nothing moves) and WebGL switched off (text-only page, all lists open, no hunt button). Clicks on the parcel and the character, the hover cursor, the keyboard path of the counter and the all-found party were exercised
+- Performance sample: 86 draw calls and about 3 200 triangles in the busiest chapter. The 3D chunk is 590 kB (153 kB gzipped) and loads after the text
+- Not checked: a real phone (touch, frame rate, the browser's collapsing address bar), a screen reader, and browsers other than Chrome. Do this before the M5 launch with `npm run dev` and the Network URL
+- Known limits: on a portrait phone only the middle of a scene fits, so most parcels are out of view and are found with the counter button instead of a tap. In the studies chapter the "?" thought briefly overlaps the blackboard text
+
 ## Open questions
+- Should the parcels move closer to the middle on portrait phones, so they can be tapped instead of found with the counter?
 - Custom domain for GitHub Pages?
-- Specific jokes and running gags (later)
+- More jokes? The one-liners live in `src/eggs.js` and are easy to swap
 - Whether to include the forest and boat building as a prologue or hidden easter egg
 - Whether to add an email address on the page later
