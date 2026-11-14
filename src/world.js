@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { flat } from './lowpoly.js';
+import { createCharacter } from './character.js';
 
 const SPACING = 14; // distance between chapter scenes along the x axis
 const DARK = new THREE.Color(0x0e1117);
@@ -20,25 +22,7 @@ const COLORS = {
 // From here on the pallet has turned into a data packet, so it glows.
 const GLOWING_PALLET = new Set(['integrations', 'azure-data', 'epilogue']);
 
-const flat = (color, extra = {}) => new THREE.MeshStandardMaterial({ color, flatShading: true, roughness: 0.8, ...extra });
-
-// Stand-in for the low-poly character (M2): box body, round head, brown hair.
-function makeCharacter(color) {
-  const group = new THREE.Group();
-
-  const body = new THREE.Mesh(new THREE.BoxGeometry(0.9, 1.3, 0.55), flat(color));
-  body.position.y = 1.15;
-  const head = new THREE.Mesh(new THREE.IcosahedronGeometry(0.42, 0), flat(0xe0b08c));
-  head.position.y = 2.1;
-  const hair = new THREE.Mesh(new THREE.IcosahedronGeometry(0.45, 0), flat(0x5a3a24));
-  hair.position.y = 2.36;
-  hair.scale.y = 0.6;
-  const legs = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.5, 0.5), flat(0x2b3140));
-  legs.position.y = 0.25;
-
-  group.add(legs, body, head, hair);
-  return group;
-}
+const WORK_RADIUS = 0.6; // this close to a chapter's centre the character starts working
 
 // The running gag: the same pallet shows up in every chapter.
 function makePallet(color, glow) {
@@ -56,12 +40,18 @@ function makeChapterScene(chapter, index) {
   const floor = new THREE.Mesh(new THREE.CylinderGeometry(5, 5, 0.3, 8), flat(0x1b2130));
   floor.position.y = -0.15;
 
-  const character = makeCharacter(color);
   const pallet = makePallet(color, GLOWING_PALLET.has(chapter.id));
 
-  group.add(floor, character, pallet);
-  group.userData = { character, pallet, color: new THREE.Color(color) };
+  group.add(floor, pallet);
+  group.userData = { pallet, color: new THREE.Color(color) };
   return group;
+}
+
+// The road the character walks along, from the first chapter to the last.
+function makeRoad(length) {
+  const road = new THREE.Mesh(new THREE.BoxGeometry(length + 10, 0.1, 1.8), flat(0x262f42));
+  road.position.set(length / 2, -0.04, 0);
+  return road;
 }
 
 export function createWorld(canvas, chapters) {
@@ -80,7 +70,10 @@ export function createWorld(canvas, chapters) {
   scene.add(sun);
 
   const scenes = chapters.map(makeChapterScene);
-  scene.add(...scenes);
+  scene.add(...scenes, makeRoad((chapters.length - 1) * SPACING));
+
+  const character = createCharacter();
+  scene.add(character.object);
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const tint = new THREE.Color();
@@ -120,9 +113,19 @@ export function createWorld(canvas, chapters) {
       scenes.forEach((s, i) => {
         s.userData.pallet.rotation.y = time * 0.8 + i;
         s.userData.pallet.position.y = 0.8 + Math.sin(time * 1.5 + i) * 0.1;
-        s.userData.character.position.y = Math.sin(time * 2 + i) * 0.04;
       });
     }
+
+    // The character changes outfit halfway between two chapters.
+    const nearest = Math.round(current);
+    character.update({
+      x: current * SPACING,
+      id: chapters[nearest].id,
+      atChapter: Math.abs(current - nearest) * SPACING < WORK_RADIUS,
+      time: now / 1000,
+      dt,
+      still: reduceMotion,
+    });
 
     renderer.render(scene, camera);
     requestAnimationFrame(frame);
