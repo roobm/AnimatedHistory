@@ -17,4 +17,13 @@ Read `docs/PLAN.md` first. It holds the goal, decisions, chapters and milestone 
 - Page text must stay readable without 3D (accessibility and SEO).
 
 ## Commands
-Add the real commands here when the Vite project exists (M1): `npm install`, `npm run dev`, `npm run build`.
+- `npm install`: install dependencies
+- `npm run dev`: dev server (also reachable from a phone on the same Wi-Fi via the Network URL)
+- `npm run build`: production build into `dist/`
+
+## Code layout
+- `src/cv-data.json`: all CV content
+- `src/chapters.js`: builds the chapter list (adds the epilogue)
+- `src/cards.js`: HTML cards, hero and nav dots
+- `src/world.js`: Three.js scene, one placeholder scene per chapter, camera follows scroll
+- `src/main.js`: wires scroll position to the world and nav
