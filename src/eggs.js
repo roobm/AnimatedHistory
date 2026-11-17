@@ -30,6 +30,9 @@ const CHARACTER = {
 const BUBBLE_SECONDS = 2.8;
 const IGNORE = '.card, #nav, a, button, summary'; // clicks here are not for the scene
 const DOUBLE_TAP_MS = 380;
+const WALK_SPEED = 3.5; // world units per second, a brisk walk
+const RUN_SPEED = 10; // with Shift: a run
+const CHAPTER_UNITS = 14; // distance between two chapters, see SPACING in world.js
 const EDGE = 16; // px: a parcel closer to the side of the window than this counts as out of view
 
 // getWorld: returns the 3D world, or null while it is loading or unavailable.
@@ -98,20 +101,60 @@ export function createEggs(chapters, getWorld) {
     if (hit) answer(hit);
   });
 
-  // Space jumps, Space twice in a row is a somersault. Space no longer scrolls
-  // the page, the arrow keys and Page Down still do. It is left alone on
-  // anything that Space already operates (buttons, links, the folding lists).
-  let lastSpace = 0;
-  window.addEventListener('keydown', (event) => {
-    if (event.code !== 'Space' || event.repeat || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
-    if (event.target.closest?.('button, a, summary, input, textarea, select, [contenteditable]')) return;
-    const world = getWorld();
-    if (!world) return; // text only: Space keeps scrolling
-    event.preventDefault();
+  // Keyboard: Left and Right walk (hold Shift to run), Up or Space jumps and
+  // twice in a row is a somersault. Walking is done by scrolling the page, so
+  // it works like the wheel. These keys are left alone on anything that
+  // already uses them (buttons, links, the folding lists, text fields), and
+  // without the 3D scene they keep their normal job.
+  const FIELDS = 'button, a, summary, input, textarea, select, [contenteditable]';
+  const held = new Set();
+  let lastHop = 0;
+  let lastFrame = 0;
+  let walking = 0;
+
+  function hop() {
     const now = performance.now();
-    world.perform(now - lastSpace < DOUBLE_TAP_MS ? 'flip' : 'jump');
-    lastSpace = now;
+    getWorld()?.perform(now - lastHop < DOUBLE_TAP_MS ? 'flip' : 'jump');
+    lastHop = now;
+  }
+
+  function walk(now) {
+    const dir = (held.has('ArrowRight') ? 1 : 0) - (held.has('ArrowLeft') ? 1 : 0);
+    const dt = Math.min((now - lastFrame) / 1000, 0.05);
+    lastFrame = now;
+    if (!dir) {
+      walking = 0;
+      return;
+    }
+    // World units per second, turned into pixels: one chapter is a screen tall and 14 units wide.
+    const units = held.has('Shift') ? RUN_SPEED : WALK_SPEED;
+    window.scrollBy(0, (dir * units * window.innerHeight * dt) / CHAPTER_UNITS);
+    walking = requestAnimationFrame(walk);
+  }
+
+  window.addEventListener('keydown', (event) => {
+    if (event.key === 'Shift') held.add('Shift');
+    if (event.altKey || event.ctrlKey || event.metaKey) return;
+    if (event.target.closest?.(FIELDS)) return;
+    const jump = event.code === 'Space' || event.key === 'ArrowUp';
+    const step = event.key === 'ArrowLeft' || event.key === 'ArrowRight';
+    if (!jump && !step) return;
+    if (jump && event.shiftKey) return; // Shift+Space still scrolls up
+    if (!getWorld()) return; // text only: the keys keep scrolling
+    event.preventDefault();
+    if (jump) {
+      if (!event.repeat) hop();
+    } else {
+      held.add(event.key);
+      if (!walking) {
+        lastFrame = performance.now();
+        walking = requestAnimationFrame(walk);
+      }
+    }
   });
+
+  window.addEventListener('keyup', (event) => held.delete(event.key));
+  window.addEventListener('blur', () => held.clear());
 
   // The counter doubles as the way in without a pointer: pressing it with
   // the keyboard finds this chapter's parcel. A click only makes the parcel
