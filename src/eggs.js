@@ -29,6 +29,7 @@ const CHARACTER = {
 
 const BUBBLE_SECONDS = 2.8;
 const IGNORE = '.card, #nav, a, button, summary'; // clicks here are not for the scene
+const DOUBLE_TAP_MS = 380;
 const EDGE = 16; // px: a parcel closer to the side of the window than this counts as out of view
 
 // getWorld: returns the 3D world, or null while it is loading or unavailable.
@@ -95,6 +96,21 @@ export function createEggs(chapters, getWorld) {
     if (event.target.closest(IGNORE)) return;
     const hit = getWorld()?.tap(event.clientX, event.clientY);
     if (hit) answer(hit);
+  });
+
+  // Space jumps, Space twice in a row is a somersault. Space no longer scrolls
+  // the page, the arrow keys and Page Down still do. It is left alone on
+  // anything that Space already operates (buttons, links, the folding lists).
+  let lastSpace = 0;
+  window.addEventListener('keydown', (event) => {
+    if (event.code !== 'Space' || event.repeat || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+    if (event.target.closest?.('button, a, summary, input, textarea, select, [contenteditable]')) return;
+    const world = getWorld();
+    if (!world) return; // text only: Space keeps scrolling
+    event.preventDefault();
+    const now = performance.now();
+    world.perform(now - lastSpace < DOUBLE_TAP_MS ? 'flip' : 'jump');
+    lastSpace = now;
   });
 
   // The counter doubles as the way in without a pointer: pressing it with

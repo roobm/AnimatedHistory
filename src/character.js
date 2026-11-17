@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { flat, glow, box, group } from './lowpoly.js';
-import { REST, WORK, mixPose, walkPose, hello } from './animations.js';
+import { REST, WORK, mixPose, walkPose, hello, jumpPose, flipPose, flipMotion } from './animations.js';
 
 const SKIN = 0xe0b08c;
 const HAIR = 0x5a3a24;
@@ -14,7 +14,9 @@ const LEFT = 1;
 
 const WALK_HEADING = 1.15; // three-quarter view while walking, not a flat profile
 const SPIN_SECONDS = 0.5; // quick-change spin when the outfit swaps
-const HELLO_SECONDS = 1.4; // hop and wave when he is clicked
+const GREETINGS = { wave: 1.4, jump: 0.95, flip: 1.25 }; // seconds. Clicking him cycles through these
+const FLIP_HEADING = Math.PI / 2; // side-on, so the somersault shows
+const PIVOT = 1.05; // height of the middle of his body, which the somersault turns about
 
 // Colours per chapter. Missing sleeve parts take the top colour, missing
 // hands are bare. extras: accessories to show, built in buildRig().
@@ -287,7 +289,10 @@ export function createCharacter() {
   let phase = 0; // walk cycle, advanced by distance so the feet match the ground
   let work = 1; // 0 = walking, 1 = working
   let spin = 1; // 0..1 progress of the quick-change spin, 1 = done
-  let greet = 1; // 0..1 progress of the hop and wave, 1 = done
+  let greet = 1; // 0..1 progress of the wave, jump or somersault, 1 = done
+  let greeting = 'wave';
+  let pokes = 0;
+  rig.root.rotation.order = 'YXZ'; // the somersault turns about his own side-to-side axis
 
   function setOutfit(id) {
     const outfit = OUTFITS[id] ?? OUTFITS.supermarket;
@@ -334,13 +339,19 @@ export function createCharacter() {
       pose.headY -= heading * 0.6 * (1 - stride) * (1 - work);
 
       if (greet < 1) {
-        greet = Math.min(greet + dt / HELLO_SECONDS, 1);
-        const hop = Math.sin(clamp01(greet * 3) * Math.PI);
-        const hand = job.prop === 'tablet' ? 'R' : 'L'; // the one without a prop
-        mixPose(pose, pose, hello(time, hand, hop), smooth(clamp01(Math.sin(greet * Math.PI) * 2.5)));
+        greet = Math.min(greet + dt / GREETINGS[greeting], 1);
+        if (greeting === 'wave') {
+          const hop = Math.sin(clamp01(greet * 3) * Math.PI);
+          const hand = job.prop === 'tablet' ? 'R' : 'L'; // the one without a prop
+          mixPose(pose, pose, hello(time, hand, hop), smooth(clamp01(Math.sin(greet * Math.PI) * 2.5)));
+        } else {
+          const move = greeting === 'jump' ? jumpPose(greet) : flipPose(greet);
+          mixPose(pose, pose, move, smooth(clamp01(Math.min(greet, 1 - greet) * 10)));
+        }
       }
 
-      const facing = greet < 1 ? 0 : atChapter ? job.heading : direction * WALK_HEADING;
+      const flipping = greet < 1 && greeting === 'flip';
+      const facing = flipping ? FLIP_HEADING : greet < 1 ? 0 : atChapter ? job.heading : direction * WALK_HEADING;
       heading += (facing - heading) * damp(9, dt);
       spin = Math.min(spin + dt / SPIN_SECONDS, 1);
       rig.eyes.scale.y = time % 3.7 < 0.12 ? 0.15 : 1; // blink
@@ -350,8 +361,21 @@ export function createCharacter() {
 
     const unwind = 1 - spin;
     const pop = Math.sin(spin * Math.PI);
-    rig.root.position.x = x;
-    rig.root.rotation.y = heading + direction * Math.PI * 2 * unwind * unwind * unwind;
+    const turn = heading + direction * Math.PI * 2 * unwind * unwind * unwind;
+    rig.root.rotation.y = turn;
+    if (greet < 1 && greeting === 'flip' && !still) {
+      // Turn about the middle of the body, not the feet, and lift him as a whole.
+      const { angle, height } = flipMotion(greet);
+      rig.root.rotation.x = angle;
+      rig.root.position.set(
+        x - PIVOT * Math.sin(angle) * Math.sin(turn),
+        height + PIVOT * (1 - Math.cos(angle)),
+        -PIVOT * Math.sin(angle) * Math.cos(turn),
+      );
+    } else {
+      rig.root.rotation.x = 0;
+      rig.root.position.set(x, 0, 0);
+    }
     rig.root.scale.set(1 - 0.08 * pop, 1 + 0.16 * pop, 1 - 0.08 * pop);
 
     const shown = smooth(clamp01(work));
@@ -365,8 +389,14 @@ export function createCharacter() {
     sparks.update(dt, grinding ? sparkOrigin : null);
   }
 
-  // Clicked or tapped: turn to the viewer, hop and wave.
-  function poke() {
+  // Clicked or tapped: turn to the viewer and wave, then jump, then somersault.
+  // kind: 'wave' | 'jump' | 'flip' to pick one.
+  function poke(kind) {
+    if (kind && greet < 1) {
+      if (greeting === 'flip' || kind === 'jump') return; // let him land first
+      if (greeting === 'jump' && greet > 0.5) return; // too late to turn the jump into a somersault
+    }
+    greeting = kind ?? ['wave', 'jump', 'flip'][pokes++ % 3];
     greet = 0;
   }
 

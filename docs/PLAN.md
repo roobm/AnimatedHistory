@@ -1,4 +1,4 @@
-# CV-timeline: Project Plan (v0.9)
+# CV-timeline: Project Plan (v0.10)
 
 Living plan. Update the milestone checklist and "Decisions" whenever a feature lands (the `finish-feature` skill does this).
 
@@ -31,6 +31,7 @@ An online CV as a scroll-driven 3D journey. A low-poly character playing "Roope"
 - **Scroll position (M4):** computed from the sections' offsets instead of the window height, so it also holds in text-only mode. No scroll library
 - **Pixel ratio (M4):** capped at 1.5 on screens narrower than 640 px, 2 elsewhere
 - **Deploy (M5):** `.github/workflows/deploy.yml` builds with Node 22 on every pull request to `main` (build check only) and publishes `dist/` to GitHub Pages on every push to `main`. `vite.config.js` sets `base` to `/AnimatedHistory/` for builds only, so the dev server stays at the root. The address is https://roobm.github.io/AnimatedHistory/
+- **Jump and somersault (after M5):** Space makes him jump, Space twice within 0.38 s turns it into a forward somersault. Clicking him cycles wave, jump, somersault, and the all-parcels party ends with a somersault. The somersault turns the whole body about its middle while he faces sideways, and he is lifted as a whole, not through the legs. A press during a somersault, or late in a jump, is ignored so he can land first. Space no longer scrolls the page while the 3D scene is on (arrow keys and Page Down still do), and it is left alone on buttons, links and the folding lists. Under reduced motion and in text-only mode nothing changes
 - **Sharing (M5):** title, description, theme colour, canonical URL and Open Graph tags in `index.html`, plus an inline SVG parcel favicon. No preview image yet
 
 ## Chapters
