@@ -1,4 +1,4 @@
-# CV-timeline: Project Plan (v0.9)
+# CV-timeline: Project Plan (v0.10)
 
 Living plan. Update the milestone checklist and "Decisions" whenever a feature lands (the `finish-feature` skill does this).
 
@@ -31,6 +31,7 @@ An online CV as a scroll-driven 3D journey. A low-poly character playing "Roope"
 - **Scroll position (M4):** computed from the sections' offsets instead of the window height, so it also holds in text-only mode. No scroll library
 - **Pixel ratio (M4):** capped at 1.5 on screens narrower than 640 px, 2 elsewhere
 - **Deploy (M5):** `.github/workflows/deploy.yml` builds with Node 22 on every pull request to `main` (build check only) and publishes `dist/` to GitHub Pages on every push to `main`. `vite.config.js` sets `base` to `/AnimatedHistory/` for builds only, so the dev server stays at the root. The address is https://roobm.github.io/AnimatedHistory/
+- **Keyboard and moves (after M5):** Left and Right arrows walk him (hold Shift to run) by scrolling the page, so they work like the wheel. Up arrow or Space jumps, and twice within 0.38 s is a cartwheel. Clicking him cycles wave, jump, cartwheel, and the all-parcels party ends with a cartwheel. The cartwheel rolls the whole body sideways about its middle while he faces the viewer, with arms overhead and legs wide, and he is lifted as a whole, not through the legs. A press during a cartwheel, or late in a jump, is ignored so he can land first. These keys are left alone on buttons, links, the folding lists and text fields, and in text-only mode they keep their normal job. Space no longer scrolls while the 3D scene is on, and neither do Up and Left/Right. Down, Page Up and Page Down still scroll. Reduced motion: nothing changes
 - **Sharing (M5):** title, description, theme colour, canonical URL and Open Graph tags in `index.html`, plus an inline SVG parcel favicon. No preview image yet
 
 ## Chapters

@@ -83,6 +83,76 @@ export function hello(t, hand, hop) {
   };
 }
 
+// Jumps and cartwheels share one timeline (p: 0..1): crouch, take off, fly, land.
+const TAKEOFF = 0.2;
+const LANDING = 0.78;
+
+function flight(p) {
+  const air = Math.min(Math.max((p - TAKEOFF) / (LANDING - TAKEOFF), 0), 1);
+  const dip = p < TAKEOFF ? Math.sin((p / TAKEOFF) * Math.PI * 0.5) : Math.max(0, Math.sin(((p - LANDING) / (1 - LANDING)) * Math.PI)) * 0.8;
+  return { air, arc: Math.sin(air * Math.PI), dip };
+}
+
+// Clicked again: a proper jump with the arms thrown up. Names every joint.
+export function jumpPose(p) {
+  const { arc, dip } = flight(p);
+  return {
+    lean: 0.35 * dip - 0.1 * arc,
+    twist: 0,
+    headX: 0.15 * dip - 0.25 * arc,
+    headY: 0,
+    headZ: 0,
+    armR: 2.7 * arc - 0.5 * dip,
+    armL: 2.7 * arc - 0.5 * dip,
+    armROut: 0.08 + 0.35 * arc,
+    armLOut: 0.08 + 0.35 * arc,
+    elbowR: 0.15 + 0.3 * arc,
+    elbowL: 0.15 + 0.3 * arc,
+    legR: 0.3 * dip + 0.5 * arc,
+    legL: 0.3 * dip + 0.5 * arc,
+    kneeR: 1.2 * dip + 0.7 * arc,
+    kneeL: 1.2 * dip + 0.7 * arc,
+    stance: 0,
+    lift: arc,
+  };
+}
+
+// A cartwheel: arms stretched overhead, legs wide, and the whole body rolling
+// sideways. The roll itself is cartwheelMotion(). Names every joint.
+export function cartwheelPose(p) {
+  const { arc, dip } = flight(p);
+  const open = Math.min(1, arc * 2);
+  return {
+    lean: 0.35 * dip,
+    twist: 0,
+    headX: 0.15 * dip,
+    headY: 0,
+    headZ: 0,
+    armR: -0.5 * dip,
+    armL: -0.5 * dip,
+    armROut: 0.08 + 2.85 * open,
+    armLOut: 0.08 + 2.85 * open,
+    elbowR: 0.15 * (1 - open),
+    elbowL: 0.15 * (1 - open),
+    legR: 0.3 * dip,
+    legL: 0.3 * dip,
+    kneeR: 1.2 * dip,
+    kneeL: 1.2 * dip,
+    stance: 0.75 * open,
+    lift: 0, // he is lifted as a whole, see cartwheelMotion()
+  };
+}
+
+// How far the whole body has rolled (radians) and how high it is.
+export function cartwheelMotion(p) {
+  const { air, arc } = flight(p);
+  return { angle: Math.PI * 2 * smoothstep(air), height: 0.5 * arc };
+}
+
+function smoothstep(v) {
+  return v * v * (3 - 2 * v);
+}
+
 function typing(t) {
   const tap = Math.sin(t * 19) * 0.07;
   return {

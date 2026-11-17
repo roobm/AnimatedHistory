@@ -87,15 +87,28 @@ body.can-poke {
   color: var(--muted);
 }
 
-#hint {
-  margin-top: 0.5rem;
+#hint,
+#keys {
   color: var(--accent);
   transition: opacity 0.4s;
 }
 
+#hint {
+  margin-top: 0.5rem;
+}
+
 .scrolled #hint,
-.no-webgl #hint {
+.scrolled #keys,
+.no-webgl #hint,
+.no-webgl #keys {
   opacity: 0;
+}
+
+/* Space only means something with a keyboard. */
+@media (hover: none) {
+  #keys {
+    display: none;
+  }
 }
 
 /* The parcel hunt counter. */
@@ -214,7 +227,8 @@ body.can-poke {
 
 @media (prefers-reduced-motion: reduce) {
   #bubble,
-  #hint {
+  #hint,
+  #keys {
     transition: none;
   }
 }
