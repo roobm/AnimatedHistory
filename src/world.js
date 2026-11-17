@@ -319,12 +319,12 @@ export function createWorld(canvas, chapters, start = 0) {
       const index = chapterHere();
       return index >= 0 && scenes[index].mascot ? react({ kind: 'parcel', index }) : null;
     },
-    // Space: 'jump', and twice in a row 'flip' (a somersault).
+    // Space: 'jump', and twice in a row 'cartwheel'.
     perform(kind) {
       character.poke(kind);
     },
     celebrate() {
-      character.poke('flip');
+      character.poke('cartwheel');
       if (!reduceMotion) burst.start(current * SPACING);
     },
   };

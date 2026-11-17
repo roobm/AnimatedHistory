@@ -102,7 +102,7 @@ export function createEggs(chapters, getWorld) {
   });
 
   // Keyboard: Left and Right walk (hold Shift to run), Up or Space jumps and
-  // twice in a row is a somersault. Walking is done by scrolling the page, so
+  // twice in a row is a cartwheel. Walking is done by scrolling the page, so
   // it works like the wheel. These keys are left alone on anything that
   // already uses them (buttons, links, the folding lists, text fields), and
   // without the 3D scene they keep their normal job.
@@ -114,7 +114,7 @@ export function createEggs(chapters, getWorld) {
 
   function hop() {
     const now = performance.now();
-    getWorld()?.perform(now - lastHop < DOUBLE_TAP_MS ? 'flip' : 'jump');
+    getWorld()?.perform(now - lastHop < DOUBLE_TAP_MS ? 'cartwheel' : 'jump');
     lastHop = now;
   }
 

@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { flat, glow, box, group } from './lowpoly.js';
-import { REST, WORK, mixPose, walkPose, hello, jumpPose, flipPose, flipMotion } from './animations.js';
+import { REST, WORK, mixPose, walkPose, hello, jumpPose, cartwheelPose, cartwheelMotion } from './animations.js';
 
 const SKIN = 0xe0b08c;
 const HAIR = 0x5a3a24;
@@ -14,9 +14,8 @@ const LEFT = 1;
 
 const WALK_HEADING = 1.15; // three-quarter view while walking, not a flat profile
 const SPIN_SECONDS = 0.5; // quick-change spin when the outfit swaps
-const GREETINGS = { wave: 1.4, jump: 0.95, flip: 1.25 }; // seconds. Clicking him cycles through these
-const FLIP_HEADING = Math.PI / 2; // side-on, so the somersault shows
-const PIVOT = 1.05; // height of the middle of his body, which the somersault turns about
+const GREETINGS = { wave: 1.4, jump: 0.95, cartwheel: 1.25 }; // seconds. Clicking him cycles through these
+const PIVOT = 1.05; // height of the middle of his body, which the cartwheel rolls about
 
 // Colours per chapter. Missing sleeve parts take the top colour, missing
 // hands are bare. extras: accessories to show, built in buildRig().
@@ -289,10 +288,10 @@ export function createCharacter() {
   let phase = 0; // walk cycle, advanced by distance so the feet match the ground
   let work = 1; // 0 = walking, 1 = working
   let spin = 1; // 0..1 progress of the quick-change spin, 1 = done
-  let greet = 1; // 0..1 progress of the wave, jump or somersault, 1 = done
+  let greet = 1; // 0..1 progress of the wave, jump or cartwheel, 1 = done
   let greeting = 'wave';
   let pokes = 0;
-  rig.root.rotation.order = 'YXZ'; // the somersault turns about his own side-to-side axis
+  rig.root.rotation.order = 'YXZ'; // the cartwheel rolls about his own front-to-back axis
 
   function setOutfit(id) {
     const outfit = OUTFITS[id] ?? OUTFITS.supermarket;
@@ -345,13 +344,12 @@ export function createCharacter() {
           const hand = job.prop === 'tablet' ? 'R' : 'L'; // the one without a prop
           mixPose(pose, pose, hello(time, hand, hop), smooth(clamp01(Math.sin(greet * Math.PI) * 2.5)));
         } else {
-          const move = greeting === 'jump' ? jumpPose(greet) : flipPose(greet);
+          const move = greeting === 'jump' ? jumpPose(greet) : cartwheelPose(greet);
           mixPose(pose, pose, move, smooth(clamp01(Math.min(greet, 1 - greet) * 10)));
         }
       }
 
-      const flipping = greet < 1 && greeting === 'flip';
-      const facing = flipping ? FLIP_HEADING : greet < 1 ? 0 : atChapter ? job.heading : direction * WALK_HEADING;
+      const facing = greet < 1 ? 0 : atChapter ? job.heading : direction * WALK_HEADING;
       heading += (facing - heading) * damp(9, dt);
       spin = Math.min(spin + dt / SPIN_SECONDS, 1);
       rig.eyes.scale.y = time % 3.7 < 0.12 ? 0.15 : 1; // blink
@@ -363,17 +361,19 @@ export function createCharacter() {
     const pop = Math.sin(spin * Math.PI);
     const turn = heading + direction * Math.PI * 2 * unwind * unwind * unwind;
     rig.root.rotation.y = turn;
-    if (greet < 1 && greeting === 'flip' && !still) {
-      // Turn about the middle of the body, not the feet, and lift him as a whole.
-      const { angle, height } = flipMotion(greet);
-      rig.root.rotation.x = angle;
+    if (greet < 1 && greeting === 'cartwheel' && !still) {
+      // Roll about the middle of the body, not the feet, towards the right of the screen,
+      // and lift him as a whole.
+      const { angle, height } = cartwheelMotion(greet);
+      const roll = -angle;
+      rig.root.rotation.z = roll;
       rig.root.position.set(
-        x - PIVOT * Math.sin(angle) * Math.sin(turn),
-        height + PIVOT * (1 - Math.cos(angle)),
-        -PIVOT * Math.sin(angle) * Math.cos(turn),
+        x + PIVOT * Math.sin(roll) * Math.cos(turn),
+        height + PIVOT * (1 - Math.cos(roll)),
+        -PIVOT * Math.sin(roll) * Math.sin(turn),
       );
     } else {
-      rig.root.rotation.x = 0;
+      rig.root.rotation.z = 0;
       rig.root.position.set(x, 0, 0);
     }
     rig.root.scale.set(1 - 0.08 * pop, 1 + 0.16 * pop, 1 - 0.08 * pop);
@@ -389,14 +389,14 @@ export function createCharacter() {
     sparks.update(dt, grinding ? sparkOrigin : null);
   }
 
-  // Clicked or tapped: turn to the viewer and wave, then jump, then somersault.
-  // kind: 'wave' | 'jump' | 'flip' to pick one.
+  // Clicked or tapped: turn to the viewer and wave, then jump, then cartwheel.
+  // kind: 'wave' | 'jump' | 'cartwheel' to pick one.
   function poke(kind) {
     if (kind && greet < 1) {
-      if (greeting === 'flip' || kind === 'jump') return; // let him land first
-      if (greeting === 'jump' && greet > 0.5) return; // too late to turn the jump into a somersault
+      if (greeting === 'cartwheel' || kind === 'jump') return; // let him land first
+      if (greeting === 'jump' && greet > 0.5) return; // too late to turn the jump into a cartwheel
     }
-    greeting = kind ?? ['wave', 'jump', 'flip'][pokes++ % 3];
+    greeting = kind ?? ['wave', 'jump', 'cartwheel'][pokes++ % 3];
     greet = 0;
   }
 

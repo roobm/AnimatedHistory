@@ -83,7 +83,7 @@ export function hello(t, hand, hop) {
   };
 }
 
-// Jumps and somersaults share one timeline (p: 0..1): crouch, take off, fly, land.
+// Jumps and cartwheels share one timeline (p: 0..1): crouch, take off, fly, land.
 const TAKEOFF = 0.2;
 const LANDING = 0.78;
 
@@ -117,35 +117,36 @@ export function jumpPose(p) {
   };
 }
 
-// The tuck for a forward somersault. The turn itself is flipMotion().
-export function flipPose(p) {
+// A cartwheel: arms stretched overhead, legs wide, and the whole body rolling
+// sideways. The roll itself is cartwheelMotion(). Names every joint.
+export function cartwheelPose(p) {
   const { arc, dip } = flight(p);
-  const tuck = Math.min(1, arc * 2);
+  const open = Math.min(1, arc * 2);
   return {
-    lean: 0.35 * dip + 0.5 * tuck,
+    lean: 0.35 * dip,
     twist: 0,
-    headX: 0.15 * dip + 0.5 * tuck,
+    headX: 0.15 * dip,
     headY: 0,
     headZ: 0,
-    armR: 1.1 * tuck - 0.5 * dip,
-    armL: 1.1 * tuck - 0.5 * dip,
-    armROut: 0.08,
-    armLOut: 0.08,
-    elbowR: 0.15 + 1.4 * tuck,
-    elbowL: 0.15 + 1.4 * tuck,
-    legR: 0.3 * dip + 1.5 * tuck,
-    legL: 0.3 * dip + 1.5 * tuck,
-    kneeR: 1.2 * dip + 0.8 * tuck,
-    kneeL: 1.2 * dip + 0.8 * tuck,
-    stance: 0,
-    lift: 0, // he is lifted as a whole, see flipMotion()
+    armR: -0.5 * dip,
+    armL: -0.5 * dip,
+    armROut: 0.08 + 2.85 * open,
+    armLOut: 0.08 + 2.85 * open,
+    elbowR: 0.15 * (1 - open),
+    elbowL: 0.15 * (1 - open),
+    legR: 0.3 * dip,
+    legL: 0.3 * dip,
+    kneeR: 1.2 * dip,
+    kneeL: 1.2 * dip,
+    stance: 0.75 * open,
+    lift: 0, // he is lifted as a whole, see cartwheelMotion()
   };
 }
 
-// How far the whole body has turned (radians, forwards) and how high it is.
-export function flipMotion(p) {
+// How far the whole body has rolled (radians) and how high it is.
+export function cartwheelMotion(p) {
   const { air, arc } = flight(p);
-  return { angle: Math.PI * 2 * smoothstep(air), height: 1.05 * arc };
+  return { angle: Math.PI * 2 * smoothstep(air), height: 0.5 * arc };
 }
 
 function smoothstep(v) {
