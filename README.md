@@ -65,9 +65,3 @@ Easier than it sounds. It was built in conversation with [Claude Code](https://c
 - **Nothing exotic to set up.** `npm install`, one Vite config line for the Pages path, and one workflow file. The only manual step on GitHub was switching the Pages source to "GitHub Actions".
 - **A strict workflow kept it tidy.** Every feature got its own branch and a pull request, and the repository's `.claude/skills/` hold the two small recipes for starting and finishing a feature.
 - **Checked in a real browser.** Each milestone was looked at in headless Chrome at desktop and phone size, with reduced motion, and with WebGL switched off.
-
-What it still has not had is a long test on a real phone, so please tell me if it stutters on yours.
-
-## Privacy
-
-This is a public CV, so by design there are no employer names, no phone number and no email on the page. The years are shown only for the IT-era chapters. LinkedIn and GitHub links are on the last card.
